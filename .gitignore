@@ -1,0 +1,10 @@
+*.gcda
+*.gcno
+*.mode1v3
+*.pbxuser
+*.xccheckout
+*.xcscmblueprint
+.DS_Store
+.idea/
+project.xcworkspace
+xcuserdata/
