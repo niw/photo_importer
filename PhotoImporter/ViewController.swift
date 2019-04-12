@@ -40,7 +40,7 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
 
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Import", style: UIBarButtonItemStyle.done, target: self, action: #selector(ViewController.didTapDone(_:)))
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Import", style: UIBarButtonItem.Style.done, target: self, action: #selector(ViewController.didTapDone(_:)))
     }
 
     override func loadView() {
@@ -78,7 +78,7 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
 
     // MARK: - Actions
 
-    func didTapDone(_ sender: Any) {
+    @objc func didTapDone(_ sender: Any) {
         let controller = UIAlertController(title: "Import photos", message: "Are you sure to import all these \(self.assets?.count ?? 0) photos?", preferredStyle: .actionSheet)
         controller.addAction(UIAlertAction(title: "Import", style: .destructive) { [weak self] (action) in
             self?.importPhotos()
