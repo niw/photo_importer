@@ -19,6 +19,7 @@ struct PhotoFileResource {
         case JPG
         case PNG
         case GIF
+        case HEIC
         case MOV
         case MP4
 
@@ -30,6 +31,8 @@ struct PhotoFileResource {
                 self = .PNG
             case "gif":
                 self = .GIF
+            case "heic":
+                self = .HEIC
             case "mov":
                 self = .MOV
             case "mp4":
@@ -52,7 +55,7 @@ struct PhotoFileResource {
 
     var isVideo: Bool {
         switch fileType {
-        case .JPG, .PNG, .GIF:
+        case .JPG, .PNG, .GIF, .HEIC:
             return false
         case .MOV, .MP4:
             return true
@@ -67,13 +70,13 @@ struct PhotoFileResource {
 
     func renderPreview(withCompletion completion: @escaping (UIImage?) -> Void) {
         switch fileType {
-        case .JPG, .PNG, .GIF:
+        case .JPG, .PNG, .GIF, .HEIC:
             completion(UIImage(contentsOfFile: path))
         case .MOV, .MP4:
             let asset = AVAsset(url: URL(fileURLWithPath: path))
             let generator = AVAssetImageGenerator(asset: asset)
             generator.appliesPreferredTrackTransform = true
-            generator.generateCGImagesAsynchronously(forTimes: [NSValue(time: kCMTimeZero)]) { (requestedTime, image, actualTime, result, error) in
+            generator.generateCGImagesAsynchronously(forTimes: [NSValue(time: CMTime.zero)]) { (requestedTime, image, actualTime, result, error) in
                 DispatchQueue.main.async {
                     completion(image.map { (image) in UIImage(cgImage: image) })
                 }
@@ -111,7 +114,7 @@ struct PhotoFileAsset {
 
     init(resource: PhotoFileResource) {
         switch resource.fileType {
-        case .JPG, .PNG, .GIF:
+        case .JPG, .PNG, .GIF, .HEIC:
             photoResource = resource
             videoResource = nil
         case .MOV, .MP4:
@@ -123,6 +126,8 @@ struct PhotoFileAsset {
     func asset(withResource resource: PhotoFileResource) -> PhotoFileAsset? {
         switch (resource.fileType, photoResource, videoResource) {
         case (.JPG, nil, _):
+            return PhotoFileAsset(photoResource: resource, videoResource: videoResource)
+        case (.HEIC, nil, _):
             return PhotoFileAsset(photoResource: resource, videoResource: videoResource)
         case (.MOV, _, nil):
             return PhotoFileAsset(photoResource: photoResource, videoResource: resource)
